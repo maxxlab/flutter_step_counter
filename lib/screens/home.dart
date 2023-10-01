@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pedometer/pedometer.dart';
+import 'package:step_counter_app/data/achievements_list.dart';
 
 String formatDate(DateTime d) {
   return d.toString().substring(0, 19);
@@ -80,20 +81,46 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Today\'s Steps',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(
-              _steps,
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                color: Theme.of(context).colorScheme.primary
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 200,),
+              Text(
+                'Today\'s Steps',
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-            )
-          ],
+              Text(
+                _steps,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.primary),
+              ),
+              const Spacer(),
+              Text('Achievements', style: Theme.of(context).textTheme.headlineMedium,),
+              Expanded(
+                child: 
+                GridView(
+                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  children: [
+                    ...achievements.map(
+                      (e) => Card(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                          Image.asset(e.image, height: 70,),
+                          Text(e.title),
+                        ]),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
