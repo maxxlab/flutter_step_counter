@@ -64,12 +64,6 @@ class _AuthScreenState extends State<AuthScreen> {
           'username': _enteredUsername,
           'email': _enteredEmail,
           'image_url': imageURL,
-          'achievements': {
-            'first logged in': true,
-            'Walked 10 000 steps': false,
-            'Walked 100 000 steps': false,
-            'Walked 1 000 000 steps': false
-          }
         });
       }
     } on FirebaseAuthException catch (error) {

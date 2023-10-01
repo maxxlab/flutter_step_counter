@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:step_counter_app/data/achievements_list.dart';
+import 'package:step_counter_app/models/achievement.dart';
+import 'package:step_counter_app/screens/achievement_detailed.dart';
 
 String formatDate(DateTime d) {
   return d.toString().substring(0, 19);
 }
+
+final db = FirebaseFirestore.instance;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     initPlatformState();
+
+    setAchievements();
   }
 
   void onStepCount(StepCount event) {
@@ -66,6 +73,25 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!mounted) return;
   }
 
+  void setAchievements() async {
+    final usersRef = db.collection('users');
+    final userRef = usersRef.doc(FirebaseAuth.instance.currentUser!.uid);
+    final achievementsRef = userRef.collection('achievements');
+    final snapshot = await achievementsRef.get();
+
+    if (snapshot.docs.isEmpty) {
+      final achievements = await achievementsRef.add(
+        {
+          'title': 'First logged in',
+          'description':
+              'You have successfully entered the program for the first time',
+          'image':
+              'https://firebasestorage.googleapis.com/v0/b/flutter-step-counter.appspot.com/o/achievements%2Fdate.png?alt=media&token=a489cf2b-ff47-43d2-99a3-b76417150256'
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 200,),
+              const SizedBox(
+                height: 200,
+              ),
               Text(
                 'Today\'s Steps',
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -99,26 +127,64 @@ class _HomeScreenState extends State<HomeScreen> {
                     .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               const Spacer(),
-              Text('Achievements', style: Theme.of(context).textTheme.headlineMedium,),
+              Text(
+                'Achievements',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
               Expanded(
-                child: 
-                GridView(
-                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
-                  children: [
-                    ...achievements.map(
-                      (e) => Card(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                          Image.asset(e.image, height: 70,),
-                          Text(e.title),
-                        ]),
-                      ),
-                    ),
-                  ],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection('achievements')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    final achievements = snapshot.data!.docs;
+
+                    return GridView(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3),
+                      children: [
+                        ...achievements.map(
+                          (e) => InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AchievementDetailedScreen(
+                                    achievement: Achievement(
+                                        title: e['title'],
+                                        description: e['description'],
+                                        image: e['image']),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(e['title']),
+                                  Image.network(
+                                    e['image'],
+                                    height: 70,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  },
                 ),
-              )
+              ),
             ],
           ),
         ),

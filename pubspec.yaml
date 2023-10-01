@@ -67,6 +67,9 @@ flutter:
   assets:
     - assets/foots_icon.png
     - assets/achievements/date.png
+    - assets/achievements/10k.png
+    - assets/achievements/100k.png
+    - assets/achievements/1m.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
