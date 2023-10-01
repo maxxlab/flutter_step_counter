@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "387914376163",
+    "project_id": "flutter-step-counter",
+    "storage_bucket": "flutter-step-counter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387914376163:android:073dce654f51dfb796b6d6",
+        "android_client_info": {
+          "package_name": "com.example.step_counter_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFbyt1eCLe0Tzvi_U5Jodl42FHvHOkA8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
