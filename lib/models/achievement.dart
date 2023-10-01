@@ -8,10 +8,12 @@ class Achievement {
   final String image;
   final String title;
   final String description;
+  final bool isAchieved;
   Achievement({
     required this.image,
     required this.title,
     required this.description,
+    required this.isAchieved,
   });
   
 
@@ -19,11 +21,13 @@ class Achievement {
     String? image,
     String? title,
     String? description,
+    bool? isAchieved,
   }) {
     return Achievement(
       image: image ?? this.image,
       title: title ?? this.title,
       description: description ?? this.description,
+      isAchieved: isAchieved ?? this.isAchieved,
     );
   }
 
@@ -32,6 +36,7 @@ class Achievement {
       'image': image,
       'title': title,
       'description': description,
+      'isAchieved': isAchieved,
     };
   }
 
@@ -40,6 +45,7 @@ class Achievement {
       image: map['image'] as String,
       title: map['title'] as String,
       description: map['description'] as String,
+      isAchieved: map['isAchieved'] as bool,
     );
   }
 
@@ -48,7 +54,9 @@ class Achievement {
   factory Achievement.fromJson(String source) => Achievement.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'Achievement(image: $image, title: $title, description: $description)';
+  String toString() {
+    return 'Achievement(image: $image, title: $title, description: $description, isAchieved: $isAchieved)';
+  }
 
   @override
   bool operator ==(covariant Achievement other) {
@@ -57,9 +65,15 @@ class Achievement {
     return 
       other.image == image &&
       other.title == title &&
-      other.description == description;
+      other.description == description &&
+      other.isAchieved == isAchieved;
   }
 
   @override
-  int get hashCode => image.hashCode ^ title.hashCode ^ description.hashCode;
+  int get hashCode {
+    return image.hashCode ^
+      title.hashCode ^
+      description.hashCode ^
+      isAchieved.hashCode;
+  }
 }

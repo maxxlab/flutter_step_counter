@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pedometer/pedometer.dart';
-import 'package:step_counter_app/data/achievements_list.dart';
 import 'package:step_counter_app/models/achievement.dart';
 import 'package:step_counter_app/screens/achievement_detailed.dart';
 
@@ -86,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
           'description':
               'You have successfully entered the program for the first time',
           'image':
-              'https://firebasestorage.googleapis.com/v0/b/flutter-step-counter.appspot.com/o/achievements%2Fdate.png?alt=media&token=a489cf2b-ff47-43d2-99a3-b76417150256'
+              'https://firebasestorage.googleapis.com/v0/b/flutter-step-counter.appspot.com/o/achievements%2Fdate.png?alt=media&token=a489cf2b-ff47-43d2-99a3-b76417150256',
+          'isAchieved': true
         },
       );
     }
@@ -152,18 +152,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         ...achievements.map(
                           (e) => InkWell(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AchievementDetailedScreen(
-                                    achievement: Achievement(
-                                        title: e['title'],
-                                        description: e['description'],
-                                        image: e['image']),
+                              if (e['isAchieved']) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        AchievementDetailedScreen(
+                                      achievement: Achievement(
+                                          title: e['title'],
+                                          description: e['description'],
+                                          image: e['image'],
+                                          isAchieved: e['isAchieved']),
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
                             child: Card(
                               child: Column(
@@ -171,10 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(e['title']),
-                                  Image.network(
-                                    e['image'],
-                                    height: 70,
-                                  )
+                                  Image.network(e['image'],
+                                      height: 70,
+                                      opacity: (e['isAchieved'])
+                                          ? const AlwaysStoppedAnimation(1)
+                                          : const AlwaysStoppedAnimation(.5))
                                 ],
                               ),
                             ),
